@@ -4,3 +4,9 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+/* mockjs  */
+declare module 'mockjs'
+
+declare module 'xlsx-style'
+declare module 'file-saver'
