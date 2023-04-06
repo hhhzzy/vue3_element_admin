@@ -34,7 +34,7 @@ export const constRoutes: Array<AppRouteRecordRaw> = [
                     title: '首页',
                     affix: true
                 },
-                component: () => import('@/views/Home.vue')
+                component: () => import('@/views/Home/Home.vue')
             }
         ]
     },
@@ -80,6 +80,14 @@ export const constRoutes: Array<AppRouteRecordRaw> = [
                     title: '图标'
                 },
                 component: () => import('@/views/Icons/Icons.vue')
+            },
+            {
+                path: 'countTo',
+                name: 'CountTo',
+                meta: {
+                    title: '数字变化'
+                },
+                component: () => import('@/views/CountTo/CountTo.vue')
             }
         ]
     },
