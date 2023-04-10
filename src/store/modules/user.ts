@@ -1,6 +1,6 @@
 import { Module } from 'vuex'
 import { IRooteState } from '../index'
-import { Login } from '@/api/user/user'
+import { Login, GetUserInfo } from '@/api/user/user'
 import { ILoginData, IUserInfoRes } from '@/api/user/type'
 import { setToken, removeToken } from '@/utils/cookies'
 
@@ -36,9 +36,9 @@ export const store: Module<IUserState, IRooteState> = {
          * 获取用户详情
          */
         async GetUserInfo({ commit }, token: string) {
-            // const data = await GetUserInfo(token)
-            const data = { roles: ['admin'], introduction: 'I am a super administrator', avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif', name: 'Super Admin' }
-            commit('SET_USER', data)
+            const data = await GetUserInfo(token)
+            // const data = { roles: ['admin'], introduction: 'I am a super administrator', avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif', name: 'Super Admin' }
+            commit('SET_USER', data.data)
         },
         async Quit({ commit, rootState }) {
             await new Promise(resolve => {

@@ -8,16 +8,16 @@ Mock.setup({
     timeout: 2000
 })
 
-Mock.mock('http://www.mock.com/api/login', 'post', (req, res) => {
+Mock.mock('http://www.mock.com/api/login', 'post', () => {
     return user.tokens['editor']
 })
 
-Mock.mock('http://www.mock.com/api/getUserInfo', 'post', (req, res) => {
+Mock.mock('http://www.mock.com/api/getUserInfo', 'post', req => {
     const reqBody = JSON.parse(req.body)
     console.log(reqBody)
     return user.users[reqBody.token]
 })
-Mock.mock('http://www.mock.com/api/table/getList', 'post', (req, res) => {
+Mock.mock('http://www.mock.com/api/table/getList', 'post', req => {
     const body = JSON.parse(req.body)
     const pageSize = body.pageSize
     const currentPage = body.currentPage
@@ -43,7 +43,7 @@ Mock.mock('http://www.mock.com/api/table/getList', 'post', (req, res) => {
         }
     }
 })
-Mock.mock('http://www.mock.com/api/upload', 'post', (req, res) => {
+Mock.mock('http://www.mock.com/api/upload', 'post', req => {
     console.log(req)
     // const reqBody = JSON.parse(req.body)
     return upload

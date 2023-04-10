@@ -15,5 +15,9 @@ import 'animate.css'
 import '@/icons/index'
 import SvgIcon from '@/icons/SvgIcon.vue'
 require('../mock/index')
-
+// 正式环境中不显示console.log
+if (process.env.NODE_ENV === 'production') {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    console.log = function () {}
+}
 createApp(App).use(store, key).use(router).use(ElementPlus, { locale }).component('svg-icon', SvgIcon).mount('#app')
