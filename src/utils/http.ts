@@ -2,6 +2,8 @@ import url from './url'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 import { getToken } from './cookies'
+const CancelToken = axios.CancelToken
+let source = CancelToken.source()
 
 const ajax = axios.create({
     // baseURL: '/api', // 允许proxy跨域
@@ -18,6 +20,8 @@ ajax.interceptors.request.use(
         // 即使存在token，也有可能过期，所以在响应拦截中也要判断状态
         // 先把config.url进行URI编码，然后全局替换其中的特殊字符，然后再URI解码
         config.url = config.url ? decodeURI(encodeURI(config.url).replace(/%E2%80%8B/g, '')) : config.url
+        // 每次请求都设置cancelToken
+        config.cancelToken = source.token
         const token = getToken()
         return {
             ...config,
@@ -26,76 +30,85 @@ ajax.interceptors.request.use(
             }
         }
     },
-    (error: AxiosError) => {
-        return Promise.reject(error)
+    (err: AxiosError) => {
+        return Promise.reject(err)
     }
 )
 // 响应拦截器
 ajax.interceptors.response.use(
     (response: AxiosResponse) => {
-        console.log(response)
         const { data } = response
         return data
     },
-    (err: AxiosError) => {
-        if (err && err.response) {
-            switch (err.response.status) {
-                case 400:
-                    err.message = (err.response.data as any).error || '请求出错(400)'
-                    break
-                case 401:
-                    // router.push({
-                    //     path: '/login',
-                    //     query: {
-                    //         redirect: router.currentRoute.fullPath
-                    //     }
-                    // })
-                    err.message = '未授权，请重新登录(401)'
-                    break
-                case 403:
-                    // 删除token
-                    // localStorage.removeItem('token')
-                    // 跳转到登录页面可以吧当前浏览的页面传过去，登录成功后返回当前页面
-                    // router.push({
-                    //     path: 'login',
-                    //     query: {
-                    //         redirect: router.currentRoute.fullPath
-                    //     }
-                    // })
-                    err.message = '拒绝访问(403)'
-                    break
-                case 404:
-                    err.message = '请求出错(404)'
-                    break
-                case 408:
-                    err.message = '请求超时(408)'
-                    break
-                case 500:
-                    // Message.error('错了哦，这是一条错误消息')
-                    // 取消请求
-                    // source.cancel('stop')
-                    err.message = '服务器错误(500)'
-                    break
-                case 501:
-                    err.message = '服务未实现(501)'
-                    break
-                case 502:
-                    err.message = '网络错误(502)'
-                    break
-                case 503:
-                    err.message = '服务不可用(503)'
-                    break
-                case 504:
-                    err.message = '网络超时(504)'
-                    break
-                case 505:
-                    err.message = 'HTTP版本不受支持(505)'
-                    break
-                default:
-                    err.message = `连接出错(${err.response.status})!`
-            }
+    (err: any) => {
+        console.log(axios.isCancel(err), err)
+        if (axios.isCancel(err)) {
+            // 重新设置CancelToken
+            source = CancelToken.source()
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            return new Promise(() => {})
         } else {
-            err.message = '连接服务器失败!'
+            // 中断后面的请求
+            source.cancel('stop')
+            if (err && err.response) {
+                switch (err.response.status) {
+                    case 400:
+                        err.message = (err.response.data as any).error || '请求出错(400)'
+                        break
+                    case 401:
+                        // router.push({
+                        //     path: '/login',
+                        //     query: {
+                        //         redirect: router.currentRoute.fullPath
+                        //     }
+                        // })
+                        err.message = '未授权，请重新登录(401)'
+                        break
+                    case 403:
+                        // 删除token
+                        // localStorage.removeItem('token')
+                        // 跳转到登录页面可以吧当前浏览的页面传过去，登录成功后返回当前页面
+                        // router.push({
+                        //     path: 'login',
+                        //     query: {
+                        //         redirect: router.currentRoute.fullPath
+                        //     }
+                        // })
+                        err.message = '拒绝访问(403)'
+                        break
+                    case 404:
+                        err.message = '请求出错(404)'
+                        break
+                    case 408:
+                        err.message = '请求超时(408)'
+                        break
+                    case 500:
+                        // Message.error('错了哦，这是一条错误消息')
+                        // 取消请求
+                        // source.cancel('stop')
+                        err.message = '服务器错误(500)'
+                        break
+                    case 501:
+                        err.message = '服务未实现(501)'
+                        break
+                    case 502:
+                        err.message = '网络错误(502)'
+                        break
+                    case 503:
+                        err.message = '服务不可用(503)'
+                        break
+                    case 504:
+                        err.message = '网络超时(504)'
+                        break
+                    case 505:
+                        err.message = 'HTTP版本不受支持(505)'
+                        break
+                    default:
+                        err.message = `连接出错(${err.response.status})!`
+                }
+            } else {
+                err.message = '连接服务器失败!'
+            }
         }
         ElMessage.error(err.message)
         return Promise.reject(err.message)

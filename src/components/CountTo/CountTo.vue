@@ -170,7 +170,7 @@
         } else {
             state.printVal = state.printVal > endVal ? endVal : state.printVal
         }
-        state.displayValue = formatNumber(state.printVal!)
+        state.displayValue = formatNumber(state.printVal as number)
         if (progress < (state.localDuration as number)) {
             state.rAF = requestAnimationFrame(count)
         } else {

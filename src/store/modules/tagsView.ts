@@ -58,7 +58,7 @@ export const store: Module<ITagsViewState, IRooteState> = {
             // 判断当前路由是否需要显示在tag上
             if (route.meta.noTagsView) return
             // 判断当前点击的路由是否已经存在，并且当前点击路由的参数是否和已经存在的路由参数相同。不同则更新
-            const bool = state.visitedTag.some((v, index) => {
+            const bool = state.visitedTag.some(v => {
                 return v.path === route.path
             })
             if (bool) {

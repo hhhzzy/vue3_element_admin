@@ -23,7 +23,7 @@
     import { useUpload } from '@/hooks/useUpload'
     // 模拟附件删除接口
     const deleteFile = async () => {
-        return await new Promise((resolve, reject) => {
+        return await new Promise(resolve => {
             setTimeout(() => {
                 resolve(true)
             }, 1000)
