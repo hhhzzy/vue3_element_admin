@@ -30,11 +30,19 @@ export const constRoutes: Array<AppRouteRecordRaw> = [
                 path: 'home',
                 name: 'Home',
                 meta: {
-                    icon: 'home',
                     title: '首页',
                     affix: true
                 },
                 component: () => import('@/views/Home/Home.vue')
+            },
+            {
+                path: 'arcgis',
+                name: 'Arcgis',
+                meta: {
+                    title: 'Arcgis',
+                    affix: true
+                },
+                component: () => import('@/views/Home/Arcgis.vue')
             }
         ]
     },

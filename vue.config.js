@@ -4,6 +4,8 @@ function resolve(dir) {
 }
 module.exports = {
     productionSourceMap: true,
+    // bable默认不编译node_modules文件，通过数组设置需要编译的文件
+    transpileDependencies: ['@arcgis/core', '@esri'],
     configureWebpack: {
         resolve: {
             alias: {
