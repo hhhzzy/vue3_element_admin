@@ -8,17 +8,17 @@
                 <!-- <p class="title">用户名</p> -->
                 <el-form ref="LoginFormRef" :model="LoginRuleForm" :rules="LoginRules" :label-position="'top'">
                     <el-form-item label="用户名" prop="userName">
-                        <el-input class="w-50 m-2" v-model="LoginRuleForm.userName" placeholder="请输入用户名" autocomplete="new-pwd" size="large" />
+                        <el-input v-model="LoginRuleForm.userName" class="w-50 m-2" placeholder="请输入用户名" autocomplete="new-pwd" size="large" />
                     </el-form-item>
                     <!-- <p class="title">密码</p> -->
                     <el-form-item label="密码" prop="password">
-                        <el-input class="w-50 m-2" v-model="LoginRuleForm.password" placeholder="请输入密码" autocomplete="off" type="password" size="large" />
+                        <el-input v-model="LoginRuleForm.password" class="w-50 m-2" placeholder="请输入密码" autocomplete="off" type="password" size="large" />
                     </el-form-item>
                     <div class="rember-box">
                         <el-checkbox size="small">记住我</el-checkbox>
                         <p class="p-t">忘记密码</p>
                     </div>
-                    <el-button type="primary" @click="Login(LoginFormRef)" :loading="loginStatus">登录</el-button>
+                    <el-button type="primary" :loading="loginStatus" @click="Login(LoginFormRef)">登录</el-button>
                 </el-form>
                 <el-divider>其他登录方式</el-divider>
                 <div class="r-link">
@@ -31,12 +31,12 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { useStore } from '@/store/index'
+    import { useUserStore } from '@/store/modules/user'
+    import { storeToRefs } from 'pinia'
     import { useRouter } from 'vue-router'
     import { getUrlQueryValue } from '@/utils/global'
     import type { FormInstance, FormRules } from 'element-plus'
     import { ref, reactive } from 'vue'
-
     const LoginFormRef = ref<FormInstance>()
     const LoginRuleForm = reactive({
         userName: '',
@@ -47,14 +47,16 @@
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
     })
     const loginStatus = ref(false)
-    const store = useStore()
+    const userStore = useUserStore()
+    const { token } = storeToRefs(userStore)
+    console.log(userStore.getToken, token)
     const { currentRoute, push } = useRouter()
     const Login = async (formEl: FormInstance | undefined) => {
         loginStatus.value = true
         if (!formEl) return
         await formEl.validate(async (valid, fields) => {
             if (valid) {
-                await store.dispatch('user/Login', { userName: 'hzy', password: 'hzy' })
+                await userStore.Login({ userName: 'hzy', password: 'hzy' })
                 let queryValue = {}
                 if (currentRoute.value.query.redirect as string) {
                     queryValue = getUrlQueryValue('', currentRoute.value.query.redirect as string)
@@ -65,18 +67,16 @@
                 loginStatus.value = false
             }
         })
-        console.log(currentRoute.value.query.redirect, 55)
+        // console.log(currentRoute.value.query.redirect, 55)
     }
 </script>
 <style lang="less" scoped>
     @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
-
     *,
     *:before,
     *:after {
         box-sizing: border-box;
     }
-
     body {
         min-height: 100vh;
         font-family: 'Raleway', sans-serif;
@@ -86,7 +86,6 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-
         &:hover,
         &:active {
             .top,
@@ -98,14 +97,12 @@
                     transition-delay: 0s;
                 }
             }
-
             .center {
                 opacity: 1;
                 transition-delay: 0.2s;
             }
         }
     }
-
     .top,
     .bottom {
         &:before,
@@ -125,7 +122,6 @@
             transition-delay: 0.2s;
         }
     }
-
     .top {
         &:before {
             transform: rotate(45deg);
@@ -136,7 +132,6 @@
             background: #ecaf81;
         }
     }
-
     .bottom {
         &:before {
             transform: rotate(-45deg);
@@ -147,7 +142,6 @@
             background: #3745b5;
         }
     }
-
     .center {
         position: absolute;
         width: 400px;
@@ -218,13 +212,13 @@
             .el-form-item {
             }
         }
-        /deep/ .el-input__inner {
+        :deep(.el-input__inner) {
             background-color: rgba(255, 255, 255, 0) !important;
         }
-        /deep/ .el-input__inner:-webkit-autofill {
+        :deep(.el-input__inner:-webkit-autofill) {
             transition: background-color 5000s ease-in-out 0s;
         }
-        /deep/ .el-input__inner:-webkit-autofill:focus {
+        :deep(.el-input__inner:-webkit-autofill:focus) {
             -webkit-text-fill-color: #333 !important;
         }
     }

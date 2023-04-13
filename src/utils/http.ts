@@ -6,8 +6,8 @@ const CancelToken = axios.CancelToken
 let source = CancelToken.source()
 
 const ajax = axios.create({
-    // baseURL: '/api', // 允许proxy跨域
-    baseURL: url, // 请求地址
+    // baseURL: '/', // 允许proxy跨域
+    baseURL: url, // 请 求地址
     timeout: 30000, // 请求超时
     withCredentials: true // 设置携带cooki
 })

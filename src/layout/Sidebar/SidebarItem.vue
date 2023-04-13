@@ -5,20 +5,26 @@
         <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
             <sidebar-item-link v-if="theOnlyOneChild.meta" :to-path="resolvePath(theOnlyOneChild.path)">
                 <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
-                    <svg-icon class="el-icon" v-if="theOnlyOneChild.meta.icon" :name="theOnlyOneChild.meta.icon" />
-                    <template v-if="theOnlyOneChild.meta.title" v-slot:title>
+                    <svg-icon v-if="theOnlyOneChild.meta.icon" class="el-icon" :name="theOnlyOneChild.meta.icon" />
+                    <template v-if="theOnlyOneChild.meta.title" #title>
                         <span class="item-title">{{ theOnlyOneChild.meta.title }}</span>
                     </template>
                 </el-menu-item>
             </sidebar-item-link>
         </template>
-        <el-sub-menu :index="resolvePath(props.route.path)" v-else>
+        <el-sub-menu v-else :index="resolvePath(props.route.path)">
             <template #title>
-                <svg-icon class="el-icon" v-if="props.route.meta && props.route.meta.icon" :name="props.route.meta.icon" />
+                <svg-icon v-if="props.route.meta && props.route.meta.icon" class="el-icon" :name="props.route.meta.icon" />
                 <span v-if="props.route.meta && props.route.meta.title" class="item-title">{{ props.route.meta.title }}</span>
             </template>
             <template v-if="props.route.children">
-                <SidebarItem v-for="(item, index) in props.route.children" :key="index" :is-collapse="isCollapse" :route="item" :base-path="resolvePath(item.path)" />
+                <SidebarItem
+                    v-for="(item, index) in props.route.children"
+                    :key="index"
+                    :is-collapse="isCollapse"
+                    :route="item"
+                    :base-path="resolvePath(item.path)"
+                />
             </template>
         </el-sub-menu>
     </template>
@@ -27,17 +33,17 @@
     import { isExternal } from '@/utils/global'
     import SidebarItemLink from './SidebarItemLink.vue'
     import { computed } from 'vue'
-    import { useStore } from '@/store/index'
-    const path = require('path')
+    import { useAppStore } from '@/store/modules/app'
+    import { resolve } from 'path'
     interface Props {
         isCollapse: boolean
         route: AppRouteRecordRaw
         basePath: string
     }
     const props = defineProps<Props>()
-    const store = useStore()
+    const appStore = useAppStore()
     const isCollapse = computed(() => {
-        return store.state.app.isCollapse
+        return appStore.isCollapse
     })
     // 是否展示左侧菜单根路由
     const alwaysShowRootMenu = computed(() => {
@@ -80,7 +86,7 @@
         if (isExternal(props.basePath)) {
             return props.basePath
         }
-        return path.resolve(props.basePath, routePath)
+        return resolve(props.basePath, routePath)
     }
 </script>
 
@@ -179,6 +185,9 @@
             .item-title {
                 color: var(--el-color-primary) !important;
             }
+        }
+        .el-menu-item:not(.is-disabled):hover {
+            background-color: var(--el-color-primary-light-9) !important;
         }
     }
 </style>

@@ -4,6 +4,7 @@
         <div class="menu-box">
             <el-scrollbar>
                 <el-menu
+                    :key="mode"
                     :default-active="activeMenu"
                     :collapse="isCollapse"
                     :unique-opened="false"
@@ -14,8 +15,7 @@
                     active-text-color="var(--el-color-primary)"
                     :mode="mode"
                     :ellipsis="true"
-                    :defaultOpeneds="[]"
-                    :key="mode"
+                    :default-openeds="[]"
                 >
                     <SidebarItem v-for="(item, index) in routes" :key="index" :route="item" :is-collapse="isCollapse" :base-path="item.path" />
                 </el-menu>
@@ -26,15 +26,17 @@
 </template>
 <script lang="ts" setup>
     import { computed } from 'vue'
-    import { useStore } from '@/store/index'
+    import { useAppStore } from '@/store/modules/app'
+    import { usePermissionStore } from '@/store/modules/permission'
     import { useRoute } from 'vue-router'
     import SidebarLogo from './SidebarLogo.vue'
     import SidebarItem from './SidebarItem.vue'
     import User from '@/layout/Headerbar/User.vue'
-    const store = useStore()
-    const routes = store.state.permission.rotues
+    const appStore = useAppStore()
+    const permissionStore = usePermissionStore()
+    const routes = permissionStore.rotues
     const route = useRoute()
-    const isCollapse = computed(() => store.state.app.isCollapse) // 侧边栏是否隐藏
+    const isCollapse = computed(() => appStore.isCollapse) // 侧边栏是否隐藏
     console.log(isCollapse, 111)
     // 当前路由路径，左侧菜单高亮显示
     const activeMenu = computed(() => {
@@ -45,7 +47,7 @@
         return path
     })
     const mode = computed(() => {
-        return store.state.app.mode
+        return appStore.mode
     })
 </script>
 <style lang="less" scoped>

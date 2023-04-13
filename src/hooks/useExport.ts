@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver'
 import { WorkBook, WorkSheet } from 'xlsx'
 import * as XLSX from 'xlsx'
-import XLSXStyle from 'xlsx-style'
+import XLSXStyle from 'xlsx-js-style'
 import http from '@/utils/http'
 
 interface ICell {
@@ -202,7 +202,16 @@ export const useExport = () => {
          * @param autoWidth 是否自动宽度
          * @param bookType 导出文件后缀
          */
-        exportJson2Excel: (jsonData: any, header: string[], multiHeader: string[][] = [], merges: any[] = [], filterVal: string[] = [], filename = 'Excel', autoWidth = true, bookType = 'xlsx') => {
+        exportJson2Excel: (
+            jsonData: any,
+            header: string[],
+            multiHeader: string[][] = [],
+            merges: any[] = [],
+            filterVal: string[] = [],
+            filename = 'Excel',
+            autoWidth = true,
+            bookType = 'xlsx'
+        ) => {
             // 格式化json数据为[[],[]]
             const data = formatJsonToArray(filterVal, jsonData)
             data.unshift(header)
@@ -307,7 +316,9 @@ export const useExport = () => {
                 http.post(url, {}, { responseType: 'blob' })
                     .then(res => {
                         if (res.code === 1) {
-                            const blob = new Blob([res.data as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' })
+                            const blob = new Blob([res.data as any], {
+                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+                            })
                             const fileName = `${name}.${bookType}`
                             if ('download' in document.createElement('a')) {
                                 // 非IE下载

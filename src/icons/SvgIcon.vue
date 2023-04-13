@@ -4,7 +4,7 @@
     </svg>
 </template>
 <script lang="ts" setup>
-    import { defineProps, computed } from 'vue'
+    import { computed } from 'vue'
 
     const props = defineProps({
         name: {
@@ -16,11 +16,11 @@
             default: '#000'
         }
     })
-
-    const iconName = computed(() => `#icon-${props.name}`)
+    console.log(props.name)
+    const iconName = computed(() => `#icon-svg-${props.name}`)
     const svgClass = computed(() => {
         if (props.name) {
-            return `svg-icon icon-${props.name}`
+            return `svg-icon icon-svg-${props.name}`
         }
         return 'svg-icon'
     })

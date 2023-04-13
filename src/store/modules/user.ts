@@ -1,73 +1,69 @@
-import { Module } from 'vuex'
-import { IRooteState } from '../index'
-import { Login, GetUserInfo } from '@/api/user/user'
+import { defineStore } from 'pinia'
 import { ILoginData, IUserInfoRes } from '@/api/user/type'
+import { Login, GetUserInfo } from '@/api/user/user'
 import { setToken, removeToken } from '@/utils/cookies'
-
+import { useTagsViewStore } from './tagsView'
 export interface IUserState {
     loginFormData: ILoginData
     token: string
     user: IUserInfoRes
 }
-export const store: Module<IUserState, IRooteState> = {
-    namespaced: true,
-    state: (): IUserState => ({
-        loginFormData: {
-            userName: '',
-            password: ''
-        },
-        token: '',
-        user: {
-            roles: [],
-            name: ''
-        }
-    }),
-    actions: {
-        /**
-         * 登录接口
-         */
-        async Login({ commit }, formData: ILoginData) {
-            const data = await Login(formData)
-            const token = data.data?.token || ''
-            setToken(token)
-            commit('SET_TOKEN', token)
-        },
-        /**
-         * 获取用户详情
-         */
-        async GetUserInfo({ commit }, token: string) {
-            const data = await GetUserInfo(token)
-            // const data = { roles: ['admin'], introduction: 'I am a super administrator', avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif', name: 'Super Admin' }
-            commit('SET_USER', data.data)
-        },
-        async Quit({ commit, rootState }) {
-            await new Promise(resolve => {
-                removeToken()
-                commit('DEL_TOKEN')
-                commit('DEL_USER')
-                // 通过{ root: true }调用其他模块的actions或者mutations
-                // 清除缓存的tag和cached
-                commit('tagsView/DEL_ALL_VISITED_TAG', rootState.tagsView, { root: true })
-                commit('tagsView/DEL_ALL_CACHED_VIEW', rootState.tagsView, { root: true })
-                resolve(true)
-            })
-        }
-    },
-    mutations: {
-        SET_TOKEN(state: IUserState, token: string) {
-            state.token = token
-        },
-        SET_USER(state: IUserState, user: IUserInfoRes) {
-            state.user = user
-        },
-        DEL_TOKEN(state: IUserState) {
-            state.token = ''
-        },
-        DEL_USER(state: IUserState) {
-            state.user = {
+export const useUserStore = defineStore('user', {
+    state: (): IUserState => {
+        return {
+            loginFormData: {
+                userName: '',
+                password: ''
+            },
+            token: '',
+            user: {
                 roles: [],
                 name: ''
             }
         }
+    },
+    getters: {},
+    actions: {
+        /**
+         * 登录
+         * @param formData 接口参数
+         */
+        async Login(formData: ILoginData) {
+            const data = await Login(formData)
+            console.log(data)
+            const token = data.data?.token || ''
+            setToken(token)
+            this.token = token
+        },
+        /**
+         * 获取用户详细信息
+         * @param token
+         */
+        async GetUserInfo(token: string) {
+            const data = await GetUserInfo(token)
+            console.log(data)
+            // const data = { roles: ['admin'], introduction: 'I am a super administrator', avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif', name: 'Super Admin' }
+            this.user = data.data!
+        },
+        /**
+         * 退出
+         * @param param0
+         */
+        async Quit() {
+            await new Promise(resolve => {
+                removeToken()
+                const tagsViewStore = useTagsViewStore()
+                this.token = ''
+                this.user = {
+                    roles: [],
+                    name: ''
+                }
+                // // 通过{ root: true }调用其他模块的actions或者mutations
+                // // 清除缓存的tag和cached
+                tagsViewStore.delAllCachedView()
+                tagsViewStore.delAllVisitedTag()
+                resolve(true)
+            })
+        }
     }
-}
+})

@@ -184,7 +184,9 @@
     function InitEchartLine() {
         echarts.use([TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, LineChart, CanvasRenderer, UniversalTransition])
 
-        type EChartsOption = echarts.ComposeOption<TitleComponentOption | ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | LineSeriesOption>
+        type EChartsOption = echarts.ComposeOption<
+            TitleComponentOption | ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | LineSeriesOption
+        >
 
         var myChart = echarts.init(unref(elLineRef))
         var option: EChartsOption

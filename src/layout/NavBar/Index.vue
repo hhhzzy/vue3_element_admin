@@ -1,15 +1,20 @@
 <template>
     <div class="nav-tab-box">
         <ScrollNav ref="scrollNav">
-            <el-dropdown trigger="contextmenu" v-for="(tag, index) in visitedTag" v-bind:key="index" @visible-change="visibleChange(tag, $event)" ref="dropdownRefs">
+            <el-dropdown v-for="(tag, index) in visitedTag" :key="index" ref="dropdownRefs" trigger="contextmenu" @visible-change="visibleChange(tag, $event)">
                 <router-link ref="tagRefs" :to="{ path: tag.path, query: tag.query }" class="tag-a el-dropdown-link">
-                    <el-tag :closable="!tag.meta?.affix" :effect="isActive(tag) ? 'dark' : 'plain'" :disable-transitions="false" @close.prevent.stop="closeTag(tag)">
+                    <el-tag
+                        :closable="!tag.meta?.affix"
+                        :effect="isActive(tag) ? 'dark' : 'plain'"
+                        :disable-transitions="false"
+                        @close.prevent.stop="closeTag(tag)"
+                    >
                         {{ tag.title }}
                     </el-tag>
                 </router-link>
                 <template #dropdown>
                     <el-dropdown-menu :data-path="tag.fullPath">
-                        <el-dropdown-item @click="refreshSelectedTag(tag)" :disabled="tag.fullPath != currentRoute.fullPath">重新加载</el-dropdown-item>
+                        <el-dropdown-item :disabled="tag.fullPath != currentRoute.fullPath" @click="refreshSelectedTag(tag)">重新加载</el-dropdown-item>
                         <el-dropdown-item @click="closeTag(tag)">关闭标签页</el-dropdown-item>
                         <el-dropdown-item @click="closeAllTag()">关闭全部标签页</el-dropdown-item>
                     </el-dropdown-menu>
@@ -23,10 +28,13 @@
 </template>
 <script lang="ts">
     import { defineComponent, computed, onMounted, unref, watch, ref, nextTick } from 'vue'
+    import type { RouteLocationNormalizedLoaded } from 'vue-router'
     import ScrollNav from './ScrollNav.vue'
-    import { useStore } from '@/store/index'
+    import { usePermissionStore } from '@/store/modules/permission'
+    import { useTagsViewStore } from '@/store/modules/tagsView'
     import { ITagNav } from '@/store/modules/tagsView'
     import { useRouter } from 'vue-router'
+    import path from 'path'
 
     export default defineComponent({
         components: {
@@ -35,31 +43,31 @@
         setup() {
             const tagRefs = ref([])
             const scrollNav = ref()
-            const path = require('path')
-            const store = useStore()
+            const permissionStore = usePermissionStore()
+            const tagsViewStore = useTagsViewStore()
             const { currentRoute } = useRouter()
             const router = useRouter()
             const dropdownRefs = ref([])
             // 获取所有的路由
             const routes = computed(() => {
-                return store.state.permission.rotues
+                return permissionStore.rotues
             })
             // 获取点击过得tag
             const visitedTag = computed(() => {
-                return store.state.tagsView.visitedTag
+                return tagsViewStore.visitedTag
             })
             // 初始化tag函数
             const initTags = () => {
                 const affixTags = filterAffixTags(unref(routes))
                 for (const tag of affixTags) {
                     if (tag.name) {
-                        store.dispatch('tagsView/addVisitedTag', tag)
+                        tagsViewStore.addVisitedTag(tag as RouteLocationNormalizedLoaded)
                     }
                 }
             }
             // 添加当前页面的路由到tag中
             const addTags = () => {
-                store.dispatch('tagsView/addTag', unref(currentRoute))
+                tagsViewStore.addTag(unref(currentRoute))
             }
             // 判断当前tag是否选中
             const isActive = (tag: ITagNav) => {
@@ -67,9 +75,9 @@
             }
             // 删除tag
             const closeTag = (tag: ITagNav) => {
-                store.dispatch('tagsView/delTag', tag)
+                tagsViewStore.delTag(tag as RouteLocationNormalizedLoaded)
                 if (isActive(tag)) {
-                    toLastView(store.state.tagsView.visitedTag, tag)
+                    toLastView(tagsViewStore.visitedTag, tag)
                 }
             }
             onMounted(() => {
@@ -102,7 +110,7 @@
             const refreshSelectedTag = async (tag: ITagNav) => {
                 if (!tag) return
                 // 删除缓存
-                store.dispatch('tagsView/delCachedTag', tag)
+                tagsViewStore.delCachedTag(tag as RouteLocationNormalizedLoaded)
                 await nextTick()
                 router.replace({
                     path: '/redirect' + tag.path,
@@ -111,8 +119,8 @@
             }
             // 关闭所有标签页
             const closeAllTag = () => {
-                store.commit('tagsView/DEL_ALL_CACHED_VIEW')
-                store.commit('tagsView/DEL_ALL_VISITED_TAG')
+                tagsViewStore.delAllCachedView()
+                tagsViewStore.delAllVisitedTag()
                 router.push('/').catch(err => {
                     console.warn(err)
                 })

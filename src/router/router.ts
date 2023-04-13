@@ -2,7 +2,6 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { shallowRef } from 'vue'
 
 import Layout from '@/layout/Index.vue'
-
 /**
  * 默认路由，不需要权限。比如：登录、注册等
  */
@@ -51,7 +50,7 @@ export const constRoutes: Array<AppRouteRecordRaw> = [
         children: [
             {
                 path: 'table',
-                name: 'Table',
+                name: 'UseTable',
                 meta: {
                     title: 'useTable'
                 },

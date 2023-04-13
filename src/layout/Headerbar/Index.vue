@@ -1,5 +1,5 @@
 <template>
-    <div class="header-bar" v-if="layoutType == 'vertical'">
+    <div v-if="layoutType == 'vertical'" class="header-bar">
         <div class="header-right-box">
             <div class="fold-box" @click="toggleSiderbar">
                 <svg-icon name="fold" />
@@ -15,12 +15,12 @@
     import User from './User.vue'
     import NavTab from '@/layout/NavBar/Index.vue'
     import { computed } from 'vue'
-    import { useStore } from '@/store/index'
-    const store = useStore()
-    const layoutType = computed(() => store.state.app.mode)
+    import { useAppStore } from '@/store/modules/app'
+    const appStore = useAppStore()
+    const layoutType = computed(() => appStore.mode)
     // 折叠侧边导航
     const toggleSiderbar = () => {
-        store.dispatch('app/changeCollapse', !store.state.app.isCollapse)
+        appStore.changeCollapse(!appStore.isCollapse)
     }
 </script>
 

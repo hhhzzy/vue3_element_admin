@@ -1,5 +1,5 @@
 // 引入mock
-const Mock = require('mockjs')
+import Mock from 'mockjs'
 import * as user from './user/user'
 import * as table from './table/table'
 import * as upload from './upload/upload'
@@ -8,7 +8,8 @@ Mock.setup({
     timeout: 2000
 })
 
-Mock.mock('http://www.mock.com/api/login', 'post', () => {
+Mock.mock('http://www.mock.com/api/login', 'post', req => {
+    console.log(req)
     return user.tokens['editor']
 })
 

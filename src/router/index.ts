@@ -1,13 +1,17 @@
 import router from './router'
 import type { RouteRecordRaw } from 'vue-router'
 import { getToken } from '@/utils/cookies'
-import { store } from '@/store/index'
+import { useUserStore } from '@/store/modules/user'
+import { usePermissionStore } from '@/store/modules/permission'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 // 定义进度条
 NProgress.configure({ showSpinner: false })
+
 // 路由导航
 router.beforeEach(async (to, from, next) => {
+    const userStore = useUserStore()
+    const permissionStore = usePermissionStore()
     /**
      * 通过接口返回的用户权限动态设置左侧路由
      */
@@ -27,17 +31,17 @@ router.beforeEach(async (to, from, next) => {
              * 1.没有：没有用户数据 => 第一次登录，需要获取用户数据
              * 2.有：已经登录成功 => 只需要跳转路由
              */
-            const hasRole = store.state.user.user.roles
+            const hasRole = userStore.user.roles
             if (hasRole.length) {
                 //
                 next()
             } else {
                 // 获取用户详情信息 获取用户角色
-                await store.dispatch('user/GetUserInfo', token)
-                const roles = store.state.user.user.roles
+                await userStore.GetUserInfo(token as string)
+                const roles = userStore.user.roles
                 // 根据用户角色 动态设置路由
-                await store.dispatch('permission/GetDynamicRouters', roles)
-                const accessRoutes = store.state.permission.rotues
+                await permissionStore.GetDynamicRouters(roles)
+                const accessRoutes = permissionStore.rotues
                 /**
                  * 因为路由动态加载，每次在添加的时候没有删除原有的路由，所以每次在添加的时候要删除原有的路由
                  * 解决路由重复问题：vue-router.esm.js?8c4f:16 [vue-router] Duplicate named routes definition

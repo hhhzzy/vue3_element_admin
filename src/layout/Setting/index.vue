@@ -23,19 +23,19 @@
 </template>
 <script lang="ts" setup>
     import { ref, computed, onMounted } from 'vue'
-    import { useStore } from '@/store/index'
+    import { useAppStore } from '@/store/modules/app'
     import { setCookie, getSysColor, getMenuColor } from '@/utils/cookies'
     import { ElMessage } from 'element-plus'
     import { mix, getCloseWhite } from './setting'
-    const store = useStore()
+    const appStore = useAppStore()
     const drawer = ref(false)
-    const mode = computed(() => store.state.app.mode)
+    const mode = computed(() => appStore.mode)
     const toggleDrawe = () => {
         drawer.value = !drawer.value
     }
     const toogleLayout = (type: string) => {
         setCookie('layout', type)
-        store.dispatch('app/changeLayout', type)
+        appStore.changeLayout(type)
     }
     const sysColor = getSysColor() ? ref(getSysColor()) : ref('#409eff')
     const menuColor = getMenuColor() ? ref(getMenuColor()) : ref('#001529')
@@ -72,7 +72,7 @@
             node.style.setProperty('--el-menu-active-color', sysColor.value)
         }
         // 存储所选颜色
-        store.dispatch('app/setSysColor', sysColor.value)
+        appStore.setSysColor(sysColor.value)
     }
     onMounted(() => {
         setSystemColor()
@@ -94,7 +94,7 @@
             node.style.setProperty('--left-menu-text-color', '#ffffff')
             node.style.setProperty('--left-menu-border-color', 'transparant')
         }
-        store.dispatch('app/setMenuColor', menuColor.value)
+        appStore.setMenuColor(menuColor.value)
     }
 </script>
 <style lang="less" scoped>

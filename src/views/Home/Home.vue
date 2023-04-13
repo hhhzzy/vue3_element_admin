@@ -11,7 +11,7 @@
                     <div class="flex">
                         <svg-icon name="peoples" />
                         <div>
-                            <CountTo :endVal="1234567" class="number" />
+                            <CountTo :end-val="1234567" class="number" />
                             <p style="margin-top: 20px">日同比 12.5%，周同比 5%</p>
                         </div>
                     </div>

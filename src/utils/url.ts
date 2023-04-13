@@ -1,1 +1,1 @@
-export default process.env.VUE_APP_URL
+export default import.meta.env.VITE_BASE_API

@@ -1,6 +1,5 @@
-
 module.exports = {
-    printWidth: 200,                    //（默认值）单行代码超出 200 个字符自动换行
+    printWidth: 160,                    //（默认值）单行代码超出 200 个字符自动换行
     tabWidth: 4,                       //（默认值）一个 tab 键缩进相当于 4 个空格
     useTabs: false,                     // 行缩进使用 tab 键代替空格
     semi: false,                       //（默认值）语句的末尾加上分号

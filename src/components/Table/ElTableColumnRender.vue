@@ -2,7 +2,7 @@
     <el-table-column :label="props.data?.label" :align="props.align" :header-align="props.headerAlign">
         <template v-for="(ele, i) in props.data?.children" :key="i">
             <!-- 渲染多级表头  -->
-            <ElTableColumnRender v-if="ele.children" :data="ele" :align="props.align" :key="i" :headerAlign="props.headerAlign" />
+            <ElTableColumnRender v-if="ele.children" :key="i" :data="ele" :align="props.align" :header-align="props.headerAlign" />
             <el-table-column
                 v-else
                 :prop="ele.field"

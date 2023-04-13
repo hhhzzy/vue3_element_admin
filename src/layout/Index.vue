@@ -13,7 +13,7 @@
                     <transition enter-active-class="animate__animated animate__fadeIn">
                         <div class="content-box">
                             <KeepAlive :include="cachedTags">
-                                <component :key="route.path" :is="Component" />
+                                <component :is="Component" :key="route.path" />
                             </KeepAlive>
                         </div>
                     </transition>
@@ -28,18 +28,20 @@
     import HeaderBar from './Headerbar/Index.vue'
     import Setting from './Setting/index.vue'
     import { computed } from 'vue'
-    import { useStore } from '@/store/index'
-    const store = useStore()
+    import { useTagsViewStore } from '@/store/modules/tagsView'
+    import { useAppStore } from '@/store/modules/app'
+    const tagsViewStore = useTagsViewStore()
+    const appStore = useAppStore()
     const cachedTags = computed(() => {
-        return store.state.tagsView.cachedTag
+        return tagsViewStore.cachedTag
     })
     // 样式
     const classOther = computed(() => {
         return {
-            horizontalSidebar: store.state.app.mode === 'horizontal',
-            verticalSidebar: store.state.app.mode === 'vertical',
-            openSidebar: !store.state.app.isCollapse,
-            hideSidebar: store.state.app.isCollapse
+            horizontalSidebar: appStore.mode === 'horizontal',
+            verticalSidebar: appStore.mode === 'vertical',
+            openSidebar: !appStore.isCollapse,
+            hideSidebar: appStore.isCollapse
         }
     })
 </script>

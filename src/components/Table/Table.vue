@@ -1,7 +1,7 @@
 <template>
     <div v-loading="props.loading">
-        <el-table :data="props.data" border :max-height="props.maxHeight" :height="props.height" ref="elTableRef">
-            <el-table-column type="selection" width="55" v-if="props.selection" />
+        <el-table ref="elTableRef" :data="props.data" border :max-height="props.maxHeight" :height="props.height">
+            <el-table-column v-if="props.selection" type="selection" width="55" />
             <el-table-column type="index" label="序号" width="65" align="center" fixed="left" />
             <template v-for="(item, index) in props.columns">
                 <el-table-column
@@ -21,10 +21,16 @@
                     </template>
                 </el-table-column>
                 <!-- 渲染多级表头  -->
-                <ElTableColumnRender v-else :data="item" :align="props.align" :key="index" :headerAlign="props.headerAlign" />
+                <ElTableColumnRender v-else :key="index" :data="item" :align="props.align" :header-align="props.headerAlign" />
             </template>
         </el-table>
-        <el-pagination v-model:current-page="currentPageRef" v-model:page-size="pageSizeRef" :page-sizes="pagination.pageSizes" :layout="pagination.layout" :total="props.total" />
+        <el-pagination
+            v-model:current-page="currentPageRef"
+            v-model:page-size="pageSizeRef"
+            :page-sizes="pagination.pageSizes"
+            :layout="pagination.layout"
+            :total="props.total"
+        />
     </div>
 </template>
 <script lang="ts" setup>
@@ -54,7 +60,9 @@
         pagination: () => {
             return {}
         },
-        selection: () => false
+        selection: () => false,
+        align: () => 'left',
+        headerAlign: () => 'left'
     })
     /**
      * 另一种默认值写法

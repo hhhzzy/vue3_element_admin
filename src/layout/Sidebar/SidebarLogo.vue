@@ -12,11 +12,11 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import { useStore } from '@/store/index'
+    import { useAppStore } from '@/store/modules/app'
     import { computed } from 'vue'
-    const store = useStore()
+    const appStore = useAppStore()
     const collapse = computed(() => {
-        return store.state.app.isCollapse
+        return appStore.isCollapse
     })
 </script>
 

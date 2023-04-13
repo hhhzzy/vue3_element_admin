@@ -10,7 +10,7 @@
                 <el-input v-model="searchParams.author" placeholder="请输入作者名字" />
             </el-form-item>
             <el-form-item label="权重：">
-                <el-select placeholder="请选择权重" v-model="searchParams.importance">
+                <el-select v-model="searchParams.importance" placeholder="请选择权重">
                     <el-option label="重要" value="1" />
                     <el-option label="还行" value="2" />
                     <el-option label="一般" value="3" />
@@ -33,11 +33,10 @@
             </el-form-item>
         </el-form>
         <Table
+            id="exportTable"
             v-model:page-size="unref(tableObject).pageSize"
             v-model:current-page="unref(tableObject).currentPage"
             v-model:total="unref(tableObject).total"
-            :align="'center'"
-            :header-align="'center'"
             :max-height="300"
             :data="unref(tableObject).tableList"
             :columns="unref(columns)"
@@ -45,7 +44,6 @@
             :pagination="unref(paginationObj)"
             :selection="true"
             @register="register"
-            id="exportTable"
         >
             <template #action="scope">
                 <el-button type="primary" @click="handleClick(scope)">add</el-button>
@@ -64,7 +62,7 @@
                 <el-input v-model="searchParams2.author" placeholder="请输入作者名字" />
             </el-form-item>
             <el-form-item label="权重：">
-                <el-select placeholder="请选择权重" v-model="searchParams2.importance">
+                <el-select v-model="searchParams2.importance" placeholder="请选择权重">
                     <el-option label="重要" value="1" />
                     <el-option label="还行" value="2" />
                     <el-option label="一般" value="3" />
@@ -91,7 +89,7 @@
 </template>
 <script lang="ts">
     export default {
-        name: 'Table'
+        name: 'UseTable'
     }
 </script>
 <script lang="ts" setup>

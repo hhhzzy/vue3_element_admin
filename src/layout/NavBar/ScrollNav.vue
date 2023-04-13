@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar height="30px" ref="scrollContainerRef">
+    <el-scrollbar ref="scrollContainerRef" height="30px">
         <slot></slot>
     </el-scrollbar>
 </template>

@@ -5,7 +5,13 @@
                 <span>文件上传</span>
             </div>
         </template>
-        <Upload :url="'http://localhost:7002/api/upload'" :file-list="unref(fileList)" @on-success="handleSucess" @on-exceed="handleExceed" @before-remove="beforeRemove" />
+        <Upload
+            :url="'http://localhost:7002/api/upload'"
+            :file-list="unref(fileList)"
+            @on-success="handleSucess"
+            @on-exceed="handleExceed"
+            @before-remove="beforeRemove"
+        />
     </el-card>
     <el-card class="box-card" style="margin-top: 10px">
         <template #header>
@@ -13,7 +19,13 @@
                 <span>文件上传</span>
             </div>
         </template>
-        <Upload :url="'http://localhost:7002/api/upload'" :file-list="unref(fileList2)" @on-success="handleSucess2" @on-exceed="handleExceed2" @before-remove="beforeRemove2" />
+        <Upload
+            :url="'http://localhost:7002/api/upload'"
+            :file-list="unref(fileList2)"
+            @on-success="handleSucess2"
+            @on-exceed="handleExceed2"
+            @before-remove="beforeRemove2"
+        />
     </el-card>
 </template>
 <script lang="ts" setup>
