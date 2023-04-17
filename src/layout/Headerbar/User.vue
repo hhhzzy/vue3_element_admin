@@ -3,7 +3,7 @@
         <el-dropdown trigger="click">
             <span class="el-dropdown-link">
                 <img src="@/assets/user.jpg" alt="" srcset="" />
-                hzy
+                {{ store.state.user.user.name }}
             </span>
             <template #dropdown>
                 <el-dropdown-menu>
@@ -44,7 +44,7 @@
             align-items: center;
         }
         .el-dropdown-link {
-            font-size: 16px;
+            font-size: 14px;
             padding: 0 5px;
         }
         img {

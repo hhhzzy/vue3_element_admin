@@ -7,7 +7,8 @@ const cdn = {
     // 排除的打包项
     externals: {
         vue: 'Vue',
-        'element-plus': 'ElementPlus'
+        'element-plus': 'ElementPlus',
+        './cptable': 'var cptable'
     },
     css: ['https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.css'],
     js: ['https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.global.js', 'https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.full.js']
