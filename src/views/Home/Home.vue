@@ -4,7 +4,7 @@
             <el-card shadow="hover">
                 <template #header>
                     <div class="card-header">
-                        <span>新增用户</span>
+                        <span>新增用户（测试自动构建）</span>
                     </div>
                 </template>
                 <el-skeleton :loading="loading" animated>
