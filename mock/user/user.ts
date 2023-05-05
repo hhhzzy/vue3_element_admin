@@ -20,6 +20,12 @@ export const users = {
         }
     }
 }
+export const usersList = [
+    {
+        name: 'admin',
+        role: 'admin'
+    }
+]
 export const tokens = {
     admin: {
         code: 200,

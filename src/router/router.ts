@@ -92,6 +92,26 @@ export const constRoutes: Array<AppRouteRecordRaw> = [
         ]
     },
     {
+        path: '/workflow',
+        name: 'WorkFlow',
+        component: shallowRef(Layout),
+        meta: {
+            title: '工作流',
+            icon: 'workflow'
+        },
+        children: [
+            {
+                path: 'lf',
+                name: 'Lf',
+                meta: {
+                    title: '工作流',
+                    icon: 'workflow'
+                },
+                component: () => import(/* webpackChunkName: "about" */ '@/views/workFlow/Lf.vue')
+            }
+        ]
+    },
+    {
         path: '/login',
         name: 'Login',
         meta: {
