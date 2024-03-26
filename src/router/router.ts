@@ -20,29 +20,67 @@ export const constRoutes: Array<AppRouteRecordRaw> = [
         name: 'Home',
         component: shallowRef(Layout),
         redirect: '/home',
-        meta: {
-            icon: 'home',
-            title: '首页',
-            alwaysShow: false
-        },
+        meta: {},
         children: [
             {
                 path: 'home',
                 name: 'Home',
                 meta: {
                     title: '首页',
+                    icon: 'home',
                     affix: true
                 },
                 component: () => import('@/views/Home/Home.vue')
-            },
+            }
+        ]
+    },
+    {
+        path: '/arcgis',
+        name: 'Arcgis',
+        component: shallowRef(Layout),
+        redirect: '/arcgis',
+        meta: {
+            title: 'Arcgis',
+            alwaysShow: false
+        },
+        children: [
             {
                 path: 'arcgis',
                 name: 'Arcgis',
                 meta: {
                     title: 'Arcgis',
+                    icon: 'earth'
+                },
+                component: () => import('@/views/Arcgis/Arcgis.vue')
+            }
+        ]
+    },
+    {
+        path: '/dataV',
+        name: 'DataV',
+        meta: {
+            title: '大屏',
+            icon: 'dataV'
+        },
+        children: [
+            {
+                path: 'datav',
+                name: 'DataV',
+                meta: {
+                    title: '大屏一',
                     affix: true
                 },
-                component: () => import('@/views/Home/Arcgis.vue')
+                component: () => import('@/views/BigScreen/DataV.vue')
+            },
+
+            {
+                path: 'datav2',
+                name: 'DataV2',
+                meta: {
+                    title: '大屏二',
+                    affix: true
+                },
+                component: () => import('@/views/BigScreen/DataV2.vue')
             }
         ]
     },
@@ -245,5 +283,4 @@ const router = createRouter({
     routes: constRoutes as RouteRecordRaw[],
     scrollBehavior: () => ({ left: 0, top: 0 })
 })
-
 export default router

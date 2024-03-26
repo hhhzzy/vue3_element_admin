@@ -15,7 +15,7 @@ const cdn = {
 // 判断线上环境才需要配置cdn
 const isProduction = process.env.NODE_ENV === 'production'
 module.exports = {
-    productionSourceMap: true,
+    productionSourceMap: false,
     // bable默认不编译node_modules文件，通过数组设置需要编译的文件
     transpileDependencies: ['@arcgis/core', '@esri'],
     configureWebpack: {
@@ -108,6 +108,13 @@ module.exports = {
                 return args
             })
             .end()
+    },
+    css: {
+        loaderOptions: {
+            less: {
+                additionalData: '@import "@/styles/calcVwOrVh.less";'
+            }
+        }
     },
     devServer: {
         port: 8080,

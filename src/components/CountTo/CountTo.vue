@@ -29,6 +29,10 @@
             type: Boolean,
             default: true
         },
+        delaytime: {
+            // 延迟执行时间
+            type: Number
+        },
         decimals: {
             type: Number,
             default: 0
@@ -103,7 +107,13 @@
     const displayValue = toRef(state, 'displayValue')
     onMounted(() => {
         if (props.autoplay) {
-            start()
+            if (props.delaytime) {
+                setTimeout(() => {
+                    start()
+                }, props.delaytime)
+            } else {
+                start()
+            }
         }
         emit('mounted')
     })
