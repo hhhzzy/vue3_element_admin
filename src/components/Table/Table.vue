@@ -25,7 +25,7 @@
             </template>
         </el-table>
         <el-pagination
-            v-model:current-page="currentPageRef"
+            v-model:current-page="pageNumberRef"
             v-model:page-size="pageSizeRef"
             :page-sizes="pagination.pageSizes"
             :layout="pagination.layout"
@@ -39,7 +39,7 @@
     import ElTableColumnRender from './ElTableColumnRender.vue'
     interface TableProps {
         pageSize: number // 每页显示个数
-        currentPage: number // 当前页码数
+        pageNumber: number // 当前页码数
         total: number // 总的条数
         data: object[] // 表格数据
         columns: TableColums[] // 表头结构
@@ -48,7 +48,7 @@
         maxHeight?: number | string // 表格的流体高度，超出展示纵向滚动条
         height?: number | string // 表格高度，超出展示纵向滚动条
         loading: boolean // 表格加载展示滚动条
-        pagination: object
+        pagination: object // 分页参数
         selection?: boolean // 是否开启多选，默认不开启
     }
 
@@ -69,7 +69,7 @@
      */
     // const props = defineProps({
     //     pageSize:Number,
-    //     currentPage:Number,
+    //     pageNumber:Number,
     //     data:{
     //         type:Array,
     //         default:() => []
@@ -81,8 +81,8 @@
         emit('register', tableRef.$parent, elTableRef)
     })
     const pageSizeRef = ref(props.pageSize)
-    const currentPageRef = ref(props.currentPage)
-    const emit = defineEmits(['update:current-page', 'update:page-size', 'register'])
+    const pageNumberRef = ref(props.pageNumber)
+    const emit = defineEmits(['update:page-number', 'update:page-size', 'register'])
     const pagination = computed(() => {
         console.log(props, 655)
         return Object.assign(
@@ -98,34 +98,18 @@
             props.pagination
         )
     })
-    console.log(pagination.value, 666666)
-    /**
-     * 监听父组件传过来的页码数的变化
-     */
-    watch(
-        () => props.currentPage,
-        (val: number) => {
-            console.log(props, 888)
-            currentPageRef.value = val
-        }
-    )
-    /**
-     * 监听父组件传过来的每页显示个数的变化
-     */
-    watch(
-        () => props.pageSize,
-        (val: number) => {
-            console.log(props, 777)
-            pageSizeRef.value = val
-        }
-    )
+    console.log(props.pageNumber, pagination.value, 666666)
     /**
      * 监听每页显示个数变化，把变化值通过emit传到父组件,可以用@size-change方法代替
      */
     watch(
         () => pageSizeRef.value,
         (val: number) => {
-            console.log(val, 33)
+            console.log(val, props, props.pageSize, 33)
+            // 当前页数不为第一页时，设置为第一页，触发监听页码数的watch，重新获取数据
+            if (pageNumberRef.value !== 1) {
+                pageNumberRef.value = 1
+            }
             emit('update:page-size', val)
         }
     )
@@ -140,13 +124,13 @@
      * 监听页码数的变化，把值通过emit传到父组件，可以用@current-change方法代替
      */
     watch(
-        () => currentPageRef.value,
+        () => pageNumberRef.value,
         (val: number) => {
-            console.log(val, 33)
-            emit('update:current-page', val)
+            console.log(val, props.pageNumber, 33)
+            emit('update:page-number', val)
         }
     )
-    console.log(props, 222)
+    console.log(props, pageNumberRef, 15555616)
 </script>
 <style lang="less" scoped>
     .el-pagination {

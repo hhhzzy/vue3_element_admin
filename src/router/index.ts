@@ -32,15 +32,17 @@ router.beforeEach(async (to, from, next) => {
              * 2.有：已经登录成功 => 只需要跳转路由
              */
             const hasRole = userStore.user.roles
+            console.log(userStore.user, userStore.user.roles, 'hasrole')
             if (hasRole.length) {
                 //
                 next()
             } else {
                 // 获取用户详情信息 获取用户角色
-                await userStore.GetUserInfo(token as string)
-                const roles = userStore.user.roles
+                await userStore.GetUserInfo()
+                const permission = userStore.permission
+                console.log(permission, 88)
                 // 根据用户角色 动态设置路由
-                await permissionStore.GetDynamicRouters(roles)
+                await permissionStore.GetDynamicRouters(permission)
                 const accessRoutes = permissionStore.rotues
                 /**
                  * 因为路由动态加载，每次在添加的时候没有删除原有的路由，所以每次在添加的时候要删除原有的路由

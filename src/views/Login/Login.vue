@@ -7,8 +7,8 @@
                 <h2>登录</h2>
                 <!-- <p class="title">用户名</p> -->
                 <el-form ref="LoginFormRef" :model="LoginRuleForm" :rules="LoginRules" :label-position="'top'">
-                    <el-form-item label="用户名" prop="userName">
-                        <el-input v-model="LoginRuleForm.userName" class="w-50 m-2" placeholder="请输入用户名" autocomplete="new-pwd" size="large" />
+                    <el-form-item label="用户名" prop="username">
+                        <el-input v-model="LoginRuleForm.username" class="w-50 m-2" placeholder="请输入用户名" autocomplete="new-pwd" size="large" />
                     </el-form-item>
                     <!-- <p class="title">密码</p> -->
                     <el-form-item label="密码" prop="password">
@@ -32,36 +32,37 @@
 </template>
 <script lang="ts" setup>
     import { useUserStore } from '@/store/modules/user'
-    import { storeToRefs } from 'pinia'
     import { useRouter } from 'vue-router'
     import { getUrlQueryValue } from '@/utils/global'
     import type { FormInstance, FormRules } from 'element-plus'
     import { ref, reactive } from 'vue'
     const LoginFormRef = ref<FormInstance>()
     const LoginRuleForm = reactive({
-        userName: '',
+        username: '',
         password: ''
     })
     const LoginRules = reactive<FormRules>({
-        userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
     })
     const loginStatus = ref(false)
     const userStore = useUserStore()
-    const { token } = storeToRefs(userStore)
-    console.log(userStore.getToken, token)
     const { currentRoute, push } = useRouter()
     const Login = async (formEl: FormInstance | undefined) => {
         loginStatus.value = true
         if (!formEl) return
         await formEl.validate(async (valid, fields) => {
             if (valid) {
-                await userStore.Login({ userName: 'hzy', password: 'hzy' })
-                let queryValue = {}
-                if (currentRoute.value.query.redirect as string) {
-                    queryValue = getUrlQueryValue('', currentRoute.value.query.redirect as string)
+                const res = await userStore.Login({ username: '王五', password: 'ww' })
+                console.log(res)
+                loginStatus.value = false
+                if (res) {
+                    let queryValue = {}
+                    if (currentRoute.value.query.redirect as string) {
+                        queryValue = getUrlQueryValue('', currentRoute.value.query.redirect as string)
+                    }
+                    push({ path: (currentRoute.value.query.redirect as string) || '/', query: queryValue })
                 }
-                push({ path: (currentRoute.value.query.redirect as string) || '/', query: queryValue })
             } else {
                 console.log('error submit!', fields)
                 loginStatus.value = false

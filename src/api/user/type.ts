@@ -2,7 +2,7 @@
  * 登录接口参数类型
  */
 export interface ILoginData {
-    userName: string
+    username: string
     password: string
 }
 /**
@@ -15,6 +15,14 @@ export interface ILoginRes {
  * 用户详情接口返回值类型
  */
 export interface IUserInfoRes {
-    roles: string[]
-    name: string
+    id?: number
+    roles: Object[]
+    username?: string
+    name?: string
+}
+export interface ITableResult {
+    total: number
+    items: {}[]
+    pageNumber: number
+    pageSize: number
 }

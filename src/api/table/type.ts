@@ -5,7 +5,7 @@ export interface ITableData {
 
 export interface ITableRes {
     total: number
-    list: {}[]
+    items: {}[]
     pageNumber: number
     pageSize: number
 }

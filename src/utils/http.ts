@@ -1,7 +1,8 @@
 import url from './url'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
-import { getToken } from './cookies'
+import { getToken, removeToken } from './cookies'
+import router from '../router'
 const CancelToken = axios.CancelToken
 let source = CancelToken.source()
 
@@ -37,6 +38,12 @@ ajax.interceptors.request.use(
 // 响应拦截器
 ajax.interceptors.response.use(
     (response: AxiosResponse) => {
+        console.log(response)
+        // 返回的code为1时才为请求成功
+        if (response.data.code !== 1) {
+            ElMessage.error(response.data.message)
+            throw new Error(response.data.message)
+        }
         const { data } = response
         return data
     },
@@ -50,18 +57,30 @@ ajax.interceptors.response.use(
         } else {
             // 中断后面的请求
             source.cancel('stop')
+            // 重新设置CancelToken
+            source = CancelToken.source()
             if (err && err.response) {
                 switch (err.response.status) {
                     case 400:
-                        err.message = (err.response.data as any).error || '请求出错(400)'
+                        err.message = (err.response.data.message as any) || '请求出错(400)'
                         break
                     case 401:
+                        // 到登录页面
+                        removeToken()
+                        console.log(router.currentRoute)
                         // router.push({
                         //     path: '/login',
                         //     query: {
                         //         redirect: router.currentRoute.fullPath
                         //     }
                         // })
+                        router.push({
+                            path: '/login',
+                            query: {
+                                redirect: router.currentRoute.fullPath
+                            }
+                        })
+                        console.log(router, 55)
                         err.message = '未授权，请重新登录(401)'
                         break
                     case 403:
@@ -79,6 +98,9 @@ ajax.interceptors.response.use(
                     case 404:
                         err.message = '请求出错(404)'
                         break
+                    case 405:
+                        err.message = 'Method Not Allowed(405)'
+                        break
                     case 408:
                         err.message = '请求超时(408)'
                         break
@@ -86,7 +108,7 @@ ajax.interceptors.response.use(
                         // Message.error('错了哦，这是一条错误消息')
                         // 取消请求
                         // source.cancel('stop')
-                        err.message = '服务器错误(500)'
+                        err.message = (err.response.data.message as any) || '服务器错误(500)'
                         break
                     case 501:
                         err.message = '服务未实现(501)'

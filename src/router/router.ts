@@ -140,7 +140,7 @@ export const asyncRouter: AppRouteRecordRaw[] = [
                 name: 'User',
                 meta: {
                     title: '用户',
-                    roles: ['editor']
+                    roles: ['UserView']
                 },
                 component: () => import('@/views/Permission/User.vue')
             },

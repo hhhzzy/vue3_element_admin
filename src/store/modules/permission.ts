@@ -13,7 +13,7 @@ export const usePermissionStore = defineStore('permission', {
     actions: {
         async GetDynamicRouters(roles: string[]) {
             let dynamicRouters: AppRouteRecordRaw[] = []
-            if (roles.includes('admin')) {
+            if (roles.includes('Admin')) {
                 // admin  超级管理员
                 dynamicRouters = asyncRouter
             } else {

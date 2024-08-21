@@ -35,7 +35,7 @@
         <Table
             id="exportTable"
             v-model:page-size="unref(tableObject).pageSize"
-            v-model:current-page="unref(tableObject).currentPage"
+            v-model:page-number="unref(tableObject).pageNumber"
             v-model:total="unref(tableObject).total"
             :max-height="300"
             :data="unref(tableObject).tableList"
@@ -74,7 +74,7 @@
         </el-form>
         <Table
             v-model:page-size="unref(tableObject2).pageSize"
-            v-model:current-page="unref(tableObject2).currentPage"
+            v-model:page-number="unref(tableObject2).pageNumber"
             :total="unref(tableObject2).total"
             :align="'center'"
             :header-align="'center'"

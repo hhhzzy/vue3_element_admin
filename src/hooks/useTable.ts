@@ -2,8 +2,8 @@ import { reactive, unref, computed, watch, ref, nextTick } from 'vue'
 // import {exportExcel} from './useExport'
 
 interface TableObject<T = any> {
-    pageSize: number
-    currentPage: number
+    pageSize: number // 每页显示个数
+    pageNumber: number // 当前页码数
     total: number
     tableList: T[]
     params: object
@@ -11,7 +11,7 @@ interface TableObject<T = any> {
 }
 interface TableResponse<T = any> {
     total: number
-    list: T[]
+    items: T[]
     pageNumber: number
     pageSize: number
 }
@@ -21,40 +21,46 @@ interface UseTableConfig<T = any> {
 export const useTable = <T = any>(config?: UseTableConfig<T>) => {
     // 表格的默认参数配置
     const tableObject = reactive<TableObject<T>>({
-        pageSize: 10, // 每页显示个数
-        currentPage: 1, // 当前页码数
+        pageSize: 2, // 每页显示个数
+        pageNumber: 1, // 当前页码数
         total: 10, // 总数
         tableList: [], // 表格数据
         params: {}, // 查询条件
         loading: true // 加载中
     })
     const searchParams = computed(() => {
-        console.log(tableObject, 2222)
+        console.log(
+            {
+                ...tableObject.params,
+                pageSize: tableObject.pageSize,
+                pageNumber: tableObject.pageNumber
+            },
+            2222
+        )
         return {
             ...tableObject.params,
             pageSize: tableObject.pageSize,
-            currentPage: tableObject.currentPage
+            pageNumber: tableObject.pageNumber
         }
     })
     // 监听每页显示个数的变化
     watch(
         () => tableObject.pageSize,
         () => {
-            console.log(tableObject.pageSize, 3333)
-            // 当前页数不为第一页时，设置为第一页，触发监听页码数的watch，重新获取数据
-            if (tableObject.currentPage === 1) {
+            // 当前页数为第一页时，重新获取数据
+            if (tableObject.pageNumber === 1) {
                 methods.getList()
-            } else {
-                tableObject.currentPage = 1
             }
+            console.log(tableObject.pageSize, tableObject.pageNumber, 3333)
         }
     )
     // 监听页码数的变化
     watch(
-        () => tableObject.currentPage,
-        () => {
-            console.log(tableObject, 4444)
-            methods.getList()
+        () => tableObject.pageNumber,
+        async (val: number) => {
+            console.log(val, 4444)
+            await methods.getList()
+            console.log(val, 4444)
         }
     )
     const methods = {
@@ -65,16 +71,16 @@ export const useTable = <T = any>(config?: UseTableConfig<T>) => {
             tableObject.loading = true
             console.log(searchParams.value, 'searchParams')
             const res = await config?.getListApi(unref(searchParams))
-            tableObject.tableList = res?.data?.list as any
+            console.log(res, tableObject, searchParams, 555555)
+            tableObject.tableList = res?.data?.items as any
             tableObject.total = res?.data?.total as number
             tableObject.loading = false
-            console.log(res, tableObject, searchParams, 555555)
         },
         /**
          * 设置查询参数
          */
         setSearchParams: (data: object) => {
-            tableObject.currentPage = 1
+            tableObject.pageNumber = 1
             tableObject.params = Object.assign(tableObject.params, {
                 pageSize: tableObject.pageSize,
                 ...data
